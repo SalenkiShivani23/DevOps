@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Registration</title>
+</head>
+<body>
+  <h1>Register for the Event</h1>
+  <form id="registrationForm">
+    <label>
+      Name:<br />
+      <input type="text" name="name" required />
+    </label><br /><br />
+    <label>
+      Email:<br />
+      <input type="email" name="email" required />
+    </label><br /><br />
+    <label>
+      Phone:<br />
+      <input type="tel" name="phone" required />
+    </label><br /><br />
+    <label>
+      Event:<br />
+      <select name="event" required>
+        <option value="">Select an event</option>
+        <option value="Tech Conference 2025">Tech Conference 2025</option>
+        <option value="Startup Meetup">Startup Meetup</option>
+        <option value="Workshop on AI">Workshop on AI</option>
+      </select>
+    </label><br /><br />
+    <button type="submit">Register</button>
+  </form>
+
+  <p id="responseMessage"></p>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+    const responseMessage = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('http://localhost:3000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          responseMessage.style.color = 'green';
+          responseMessage.textContent = result.message;
+          form.reset();
+        } else {
+          responseMessage.style.color = 'red';
+          responseMessage.textContent = result.message || 'Registration failed.';
+        }
+      } catch (error) {
+        responseMessage.style.color = 'red';
+        responseMessage.textContent = 'Error connecting to server.';
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
